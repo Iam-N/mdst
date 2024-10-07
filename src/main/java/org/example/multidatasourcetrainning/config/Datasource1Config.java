@@ -2,7 +2,6 @@ package org.example.multidatasourcetrainning.config;
 
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,8 +33,8 @@ public class Datasource1Config {
                 .build();
     }
 
-    @Primary
     @Bean
+    @Primary
     public PlatformTransactionManager transactionManager1(EntityManagerFactory entityManagerFactory1) {
         return new JpaTransactionManager(entityManagerFactory1);
     }

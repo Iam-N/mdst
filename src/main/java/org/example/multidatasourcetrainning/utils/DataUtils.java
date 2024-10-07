@@ -2,9 +2,18 @@ package org.example.multidatasourcetrainning.utils;
 
 import lombok.experimental.UtilityClass;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @UtilityClass
 public class DataUtils {
@@ -45,7 +54,7 @@ public class DataUtils {
             for (Field toField : toClass.getDeclaredFields()) {
                 toField.setAccessible(true); // Allow access to private fields
                 Field fromField = fromFieldMap.get(toField.getName());
-                if(fromField.getName().equalsIgnoreCase("serialVersionUID")) continue;
+                if (fromField.getName().equalsIgnoreCase("serialVersionUID")) continue;
                 // Check if 'from' object has the field with the same name and compatible type
                 if (fromField != null && fromField.getType().equals(toField.getType())) {
                     Object value = fromField.get(from);
@@ -60,5 +69,24 @@ public class DataUtils {
         }
 
         return to;
+    }
+
+    public static File zip(String zipFileName, Path csvFilePath) throws IOException {
+        Path zipPath = Paths.get(zipFileName);
+        try (ZipOutputStream zipOut = new ZipOutputStream(Files.newOutputStream(zipPath))) {
+            // Add CSV file to ZIP archive
+            try (InputStream inputStream = Files.newInputStream(csvFilePath)) {
+                ZipEntry zipEntry = new ZipEntry(csvFilePath.getFileName().toString());
+                zipOut.putNextEntry(zipEntry);
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = inputStream.read(buffer)) > 0) {
+                    zipOut.write(buffer, 0, length);
+                }
+                zipOut.closeEntry();
+            }
+            Files.deleteIfExists(csvFilePath);
+            return zipPath.toFile();
+        }
     }
 }

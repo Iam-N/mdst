@@ -1,6 +1,5 @@
 package org.example.multidatasourcetrainning.services;
 
-import jakarta.persistence.EntityManager;
 import org.example.multidatasourcetrainning.db1.entities.ReadAndWrite;
 import org.example.multidatasourcetrainning.db1.repository.ReadAndWriteRepository;
 import org.example.multidatasourcetrainning.db2.entities.ReadOnly;
@@ -27,9 +26,6 @@ public class SyncDataSourceService {
 
     @Autowired
     private DB2AccessModifier AMQ;
-
-    @Autowired
-    private EntityManager entityManager;
 
     @Transactional(value = "transactionManager2", readOnly = true)
     public DB2Res findDataFromDatasource2() {
